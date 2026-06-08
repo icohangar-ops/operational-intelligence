@@ -1,0 +1,51 @@
+[workspace]
+members = [
+    "crates/oi-core",
+    "crates/oi-llm",
+    "crates/oi-tools",
+    "crates/oi-memory",
+    "crates/oi-eval",
+    "crates/oi-crew",
+    "crates/oi-hiring",
+    "crates/oi-connector",
+    "crates/oi-api",
+    "crates/oi-cli",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Shyam Desigan <cubiczan@noreply.codeberg.org>"]
+license = "MIT"
+repository = "https://codeberg.org/cubiczan/operational-intelligence"
+description = "Operational Intelligence platform — multi-agent crews with evidence-traced reasoning"
+
+[workspace.dependencies]
+oi-core = { path = "crates/oi-core" }
+oi-llm = { path = "crates/oi-llm" }
+oi-tools = { path = "crates/oi-tools" }
+oi-memory = { path = "crates/oi-memory" }
+oi-eval = { path = "crates/oi-eval" }
+oi-crew = { path = "crates/oi-crew" }
+oi-hiring = { path = "crates/oi-hiring" }
+oi-connector = { path = "crates/oi-connector" }
+oi-api = { path = "crates/oi-api" }
+anyhow = "1.0"
+async-trait = "0.1"
+axum = { version = "0.8", features = ["json"] }
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4.5", features = ["derive", "env"] }
+hex = "0.4"
+hmac = "0.12"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+sha2 = "0.10"
+thiserror = "2.0"
+tokio = { version = "1.49", features = ["macros", "rt-multi-thread", "signal"] }
+tower-http = { version = "0.6", features = ["trace", "cors"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1.19", features = ["v4", "serde"] }

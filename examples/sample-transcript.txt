@@ -1,0 +1,8 @@
+Interviewer: Tell me about a distributed system you designed.
+Candidate: We built an event-driven pipeline on Kafka with 12 microservices. The key tradeoff was consistency vs availability — we chose eventual consistency for order processing.
+Interviewer: How did you handle production incidents?
+Candidate: I'm not sure we had a formal runbook. I think we mostly relied on paging and maybe some dashboards.
+Interviewer: Describe a time you influenced a technical decision.
+Candidate: I probably convinced the team to adopt Rust for the hot path because of memory safety and predictable latency under load. We measured 40% tail latency improvement.
+Interviewer: Any concerns about this role?
+Candidate: Maybe the on-call rotation — I haven't done 24/7 production support at scale before.

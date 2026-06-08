@@ -1,0 +1,15 @@
+[package]
+name = "oi-tools"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "MCP-style tools for web search, files, and knowledge base"
+
+[dependencies]
+async-trait = { workspace = true }
+oi-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }

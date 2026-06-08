@@ -1,0 +1,16 @@
+[package]
+name = "oi-connector"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Data model connectors for operational intelligence queries"
+
+[dependencies]
+async-trait = { workspace = true }
+oi-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }

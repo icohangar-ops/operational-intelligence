@@ -1,0 +1,21 @@
+[package]
+name = "oi-crew"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Multi-agent content crew: research, analyst, writer, editor"
+
+[dependencies]
+oi-core = { workspace = true }
+oi-eval = { workspace = true }
+oi-llm = { workspace = true }
+oi-memory = { workspace = true }
+oi-tools = { workspace = true }
+async-trait = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }

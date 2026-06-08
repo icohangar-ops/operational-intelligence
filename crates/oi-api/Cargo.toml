@@ -1,0 +1,24 @@
+[package]
+name = "oi-api"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "REST API for Operational Intelligence workflows"
+
+[dependencies]
+oi-connector = { workspace = true }
+oi-core = { workspace = true }
+oi-crew = { workspace = true }
+oi-hiring = { workspace = true }
+oi-llm = { workspace = true }
+oi-memory = { workspace = true }
+axum = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tower-http = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
