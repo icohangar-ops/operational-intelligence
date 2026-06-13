@@ -10,6 +10,8 @@ description = "LLM provider abstraction — mock and HTTP backends"
 [dependencies]
 async-trait = { workspace = true }
 reqwest = { workspace = true }
+resilient-call = { git = "https://github.com/icohangar-ops/cubiczan-resilience" }
+tokio = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }

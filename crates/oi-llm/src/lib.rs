@@ -1,6 +1,11 @@
 use async_trait::async_trait;
+use resilient_call::{retry, with_timeout, RetryPolicy};
 use serde::{Deserialize, Serialize};
+use std::time::Duration;
 use thiserror::Error;
+
+/// Per-request deadline applied to each LLM HTTP attempt.
+const LLM_REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
 
 #[derive(Debug, Error)]
 pub enum LlmError {
@@ -124,8 +129,12 @@ pub struct HttpLlm {
 
 impl HttpLlm {
     pub fn openai_compatible(api_key: impl Into<String>, model: impl Into<String>) -> Self {
+        let client = reqwest::ClientBuilder::new()
+            .timeout(LLM_REQUEST_TIMEOUT)
+            .build()
+            .expect("reqwest client with timeout should build");
         Self {
-            client: reqwest::Client::new(),
+            client,
             api_key: api_key.into(),
             base_url: "https://api.openai.com/v1".into(),
             model: model.into(),
@@ -175,21 +184,53 @@ impl LlmProvider for HttpLlm {
         }];
         messages.extend(request.messages);
 
-        let resp = self
-            .client
-            .post(format!("{}/chat/completions", self.base_url))
-            .bearer_auth(&self.api_key)
-            .json(&ChatRequest {
-                model: &self.model,
-                messages,
-                temperature: request.temperature,
-            })
-            .send()
-            .await?;
+        let url = format!("{}/chat/completions", self.base_url);
+        let temperature = request.temperature;
 
-        if !resp.status().is_success() {
-            return Err(LlmError::Api(resp.text().await.unwrap_or_default()));
-        }
+        // Resilient send: cap each attempt with a 30s timeout, then retry with
+        // exponential backoff + full jitter, max 3 attempts. Only transient
+        // failures (network/timeout, or non-success HTTP) are retried; a
+        // success status short-circuits the loop.
+        let policy = RetryPolicy::with_max_attempts(3);
+        let resp = retry(
+            || async {
+                let resp = with_timeout(
+                    self.client
+                        .post(&url)
+                        .bearer_auth(&self.api_key)
+                        .json(&ChatRequest {
+                            model: &self.model,
+                            messages: messages.clone(),
+                            temperature,
+                        })
+                        .send(),
+                    LLM_REQUEST_TIMEOUT,
+                )
+                .await
+                .map_err(|e| match e.into_source() {
+                    Some(src) => LlmError::Http(src),
+                    None => LlmError::Api(format!(
+                        "request timed out after {:?}",
+                        LLM_REQUEST_TIMEOUT
+                    )),
+                })?;
+
+                if !resp.status().is_success() {
+                    return Err(LlmError::Api(resp.text().await.unwrap_or_default()));
+                }
+                Ok(resp)
+            },
+            &policy,
+            // Retry transient HTTP errors and upstream API failures; the
+            // request is idempotent (no money/state mutation) so re-sending
+            // is safe.
+            |e: &LlmError| matches!(e, LlmError::Http(_) | LlmError::Api(_)),
+        )
+        .await
+        .map_err(|e| match e.into_source() {
+            Some(src) => src,
+            None => LlmError::Api("LLM request timed out".into()),
+        })?;
 
         let body: ChatResponse = resp.json().await?;
         let content = body
