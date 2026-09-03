@@ -85,6 +85,7 @@ Requires `oi-usage` crate (`MeteredLlm` wraps `MockLlm` or HTTP LLM). If env var
 | `GET` | `/workflows/{id}/traces` | OpenTelemetry-style audit traces |
 | `POST` | `/oi/query` | Operational intelligence query |
 | `GET` | `/oi/initiatives` | List strategic initiatives |
+| `POST` | `/uipath/intake` | UiPath handoff into crew, hiring, or query workflows |
 
 ## Key capabilities
 
@@ -94,6 +95,7 @@ Requires `oi-usage` crate (`MeteredLlm` wraps `MockLlm` or HTTP LLM). If env var
 - **HITL approval gates** — workflows pause for human review before finalization
 - **Signed audit traces** — full traceability from business question to validated answer
 - **Mock-first** — runs fully offline; swap `MockLlm` for HTTP OpenAI-compatible backend
+- **UiPath intake** — external document or evidence handoffs can trigger the same workflow surface
 
 ## Crates
 
